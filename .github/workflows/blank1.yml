@@ -35,4 +35,49 @@ jobs:
         with:
           name: VPS IP
           path: ${{ env.vps_ip_file }}
+
+      - name: Download VPS IP artifact and check it
+        uses: actions/download-artifact@v3
+        with:
+          name: VPS IP
+      - shell: bash
+        run: |
+          echo "VPS_IP=$(tail -1 ${{ env.vps_ip_file }})" >> $GITHUB_ENV
+      - run: |
+          echo ${{ env.VPS_IP }}
+      - name: "Upload repo to VPS"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.VPS_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            mkdir ${{ env.PROJECT_DIR }}
+            cd ${{ env.PROJECT_DIR }}
+            git clone ${{ env.REPO_LINK }}
+            echo "REPO_DOWNLOADED=true" >> /etc/profile
+            echo "SERVER_NAME='$(hostname -I | awk '{print $1}')'" >> /etc/profile
+            source /etc/profile
+            chown www-data:www-data ${{ env.PROJECT_DIR_app }}/db.sqlite3 
+              chown www-data:www-data ${{ env.PROJECT_DIR_app }}/static_collections
+            chmod 755 ${{ env.PROJECT_DIR_app }}/db.sqlite3
+      - name: Download VPS IP artifact and check it
+        uses: actions/download-artifact@v3
+        with:
+          name: VPS IP
+      - shell: bash
+        run: |
+          echo "VPS_IP=$(tail -1 ${{ env.vps_ip_file }})" >> $GITHUB_ENV
+      - run: |
+          echo ${{ env.VPS_IP }}
+      
+      - name: "Install Nginx"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.VPS_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo apt update && sudo apt install -y nginx
+            ln -s /var/www/pyoops.com/configs/pyoops.conf /etc/nginx/sites-enabled/pyoops
             
