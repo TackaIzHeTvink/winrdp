@@ -26,3 +26,5 @@ jobs:
  
             -   name: Display status from deploy
                 run: echo "${{ steps.deploy.outputs.status }}"
+            -   name: qwe status from deploy
+                run: echo "qwe"
