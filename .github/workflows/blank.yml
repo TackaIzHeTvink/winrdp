@@ -3,35 +3,6 @@ on: workflow_dispatch
 env:
   PROJECT_DIR: /var/www/
   PROJECT_DIR_app: /var/www/pyoops.com/pyoops
-  REPO_LINK: https://github.com/Pseudolukian/pyoops.com.git
-  REPO_NAME: pyoops.com
+  REPO_LINK: https://github.com/TackaIzHeTvink/winrdp.com.git
+  REPO_NAME: winrdp.com
   vps_ip_file: VPS_IP.txt
-  
-create_vps:
-runs-on: ubuntu-latest
-
-steps:
-  - name: "Checkout the repo"
-    uses: actions/checkout@v3
-  
-  - name: "Setup Python"
-    uses: actions/setup-python@v4
-    with:
-      python-version: '3.10'
-      cache: 'pip'
-  
-  - name: "Run the VPS create script"
-    run: |
-      pip install requests
-      python3 ./1cloud_create_vps.py ${{ secrets.API_KEY }}
-  
-  - name: Export VPS IP to file and check
-    run: |
-      echo "${{ env.VPS }}" > ${{ env.vps_ip_file }}
-      echo $(tail -1 ${{ env.vps_ip_file }})
- 
-  - name: Save VPS IP
-    uses: actions/upload-artifact@v3
-    with:
-      name: VPS IP
-      path: ${{ env.vps_ip_file }}
