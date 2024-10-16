@@ -1,0 +1,8 @@
+name: Create new VPS and deploy repo
+on: workflow_dispatch
+env:
+  PROJECT_DIR: /var/www/
+  PROJECT_DIR_app: /var/www/pyoops.com/pyoops
+  REPO_LINK: https://github.com/Pseudolukian/pyoops.com.git
+  REPO_NAME: pyoops.com
+  vps_ip_file: VPS_IP.txt
